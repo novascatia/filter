@@ -7,12 +7,17 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
+    padding: 20px; /* Tambahkan padding agar tidak terlalu mepet */
+    box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
 }
 
 .container {
     text-align: center;
     max-width: 800px;
     padding: 2rem;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
 
 h1 {
@@ -34,11 +39,16 @@ p {
     border: 2px dashed #ddd;
     border-radius: 12px;
     margin-top: 2rem;
-    padding: 3rem 1rem;
+    padding: 1rem; /* Padding lebih kecil karena kontennya dinamis */
+    min-height: 250px; /* Agar tidak terlalu kecil saat kosong */
+    display: flex; /* Untuk memposisikan canvas/pesan di tengah */
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     transition: border-color 0.3s;
     background-color: #fff;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    position: relative; /* Untuk penempatan elemen di dalamnya */
 }
 
 .drop-area:hover {
@@ -49,6 +59,7 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 2rem; /* Padding internal untuk pesan drop */
 }
 
 .icon {
@@ -72,7 +83,7 @@ p {
     background-color: #d1618a;
 }
 
-#preview-image, #canvas {
+#canvas {
     max-width: 100%;
     height: auto;
     border-radius: 8px;
@@ -81,6 +92,67 @@ p {
 
 .controls {
     margin-top: 2rem;
-    font-size: 1rem;
-    color: #666;
+    padding: 1rem;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.controls p {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+/* Styling untuk slider */
+.slider-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.slider-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555;
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 8px;
+    -webkit-appearance: none;
+    background: #ddd;
+    border-radius: 5px;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+    opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e8729f; /* Warna thumb */
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #e8729f; /* Warna thumb */
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Kelas utility untuk menyembunyikan/menampilkan elemen */
+.hidden {
+    display: none !important;
 }

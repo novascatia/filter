@@ -13,19 +13,29 @@
 
         <div class="drop-area" id="drop-area">
             <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp" hidden>
-            <div class="drop-message">
+            
+            <div class="drop-message" id="drop-message">
                 <span class="icon">🖼️</span>
                 <p>Jatuhkan gambar di sini</p>
                 <p>atau klik untuk menelusuri file-mu</p>
                 <button class="btn" id="choose-image-btn">Pilih Gambar</button>
                 <p class="file-info">Mendukung JPEG, PNG, WebP <br>Ukuran file maksimal: 25MB</p>
             </div>
-            <img id="preview-image" src="" alt="Image Preview" hidden>
-            <canvas id="canvas" hidden></canvas>
-        </div>
+            
+            <canvas id="canvas" class="hidden"></canvas>
+            <img id="original-image-data" src="" alt="" class="hidden"> </div>
 
-        <div class="controls" id="controls" hidden>
+        <div class="controls" id="controls" class="hidden">
+            <div class="slider-group">
+                <label for="shadow-slider">Dominasi Hijau (Bayangan):</label>
+                <input type="range" id="shadow-slider" min="0" max="100" value="50">
+            </div>
+            <div class="slider-group">
+                <label for="highlight-slider">Dominasi Pink (Sorotan):</label>
+                <input type="range" id="highlight-slider" min="0" max="100" value="50">
+            </div>
             <p>Duotone effect applied with green shadows and pink highlights</p>
+            <button class="btn" id="reset-btn">Reset & Unggah Ulang</button>
         </div>
     </div>
     <script src="script.js"></script>
