@@ -4,7 +4,7 @@ body {
     color: #444;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
     margin: 0;
     padding: 20px;
@@ -35,10 +35,15 @@ p {
     color: #666;
 }
 
+.content-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
 .drop-area {
     border: 2px dashed #ddd;
     border-radius: 12px;
-    margin-top: 2rem;
     padding: 1rem;
     min-height: 250px;
     display: flex;
@@ -105,7 +110,6 @@ p {
 }
 
 .controls {
-    margin-top: 2rem;
     padding: 1.5rem;
     background-color: #f0f0f0;
     border-radius: 10px;
