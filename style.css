@@ -7,8 +7,8 @@ body {
     align-items: center;
     min-height: 100vh;
     margin: 0;
-    padding: 20px; /* Tambahkan padding agar tidak terlalu mepet */
-    box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .container {
@@ -39,16 +39,16 @@ p {
     border: 2px dashed #ddd;
     border-radius: 12px;
     margin-top: 2rem;
-    padding: 1rem; /* Padding lebih kecil karena kontennya dinamis */
-    min-height: 250px; /* Agar tidak terlalu kecil saat kosong */
-    display: flex; /* Untuk memposisikan canvas/pesan di tengah */
+    padding: 1rem;
+    min-height: 250px;
+    display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     transition: border-color 0.3s;
     background-color: #fff;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    position: relative; /* Untuk penempatan elemen di dalamnya */
+    position: relative;
 }
 
 .drop-area:hover {
@@ -59,7 +59,7 @@ p {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem; /* Padding internal untuk pesan drop */
+    padding: 2rem;
 }
 
 .icon {
@@ -75,12 +75,26 @@ p {
     border-radius: 25px;
     font-size: 1rem;
     cursor: pointer;
-    margin-top: 1rem;
+    margin: 0.5rem;
     transition: background-color 0.3s;
 }
 
 .btn:hover {
     background-color: #d1618a;
+}
+
+.btn-secondary {
+    background-color: #888;
+}
+
+.btn-secondary:hover {
+    background-color: #666;
+}
+
+.btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
 #canvas {
@@ -92,19 +106,18 @@ p {
 
 .controls {
     margin-top: 2rem;
-    padding: 1rem;
+    padding: 1.5rem;
     background-color: #f0f0f0;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
-.controls p {
+.duotone-info {
     font-size: 0.9rem;
     color: #888;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
-/* Styling untuk slider */
 .slider-group {
     margin-bottom: 1.5rem;
     text-align: left;
@@ -138,7 +151,7 @@ input[type="range"]::-webkit-slider-thumb {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #e8729f; /* Warna thumb */
+    background: #e8729f;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
@@ -147,12 +160,11 @@ input[type="range"]::-moz-range-thumb {
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #e8729f; /* Warna thumb */
+    background: #e8729f;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Kelas utility untuk menyembunyikan/menampilkan elemen */
 .hidden {
     display: none !important;
 }
