@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brave Pink Hero Green</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Brave Pink Hero Green 1312</h1>
+        <p>Pink × Green duotone. Lokal & privat. <br>Transform foto-fotomu dengan efek duotone yang indah. Semua proses terjadi di browser-mu.</p>
+
+        <div class="drop-area" id="drop-area">
+            <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp" hidden>
+            <div class="drop-message">
+                <span class="icon">🖼️</span>
+                <p>Jatuhkan gambar di sini</p>
+                <p>atau klik untuk menelusuri file-mu</p>
+                <button class="btn" id="choose-image-btn">Pilih Gambar</button>
+                <p class="file-info">Mendukung JPEG, PNG, WebP <br>Ukuran file maksimal: 25MB</p>
+            </div>
+            <img id="preview-image" src="" alt="Image Preview" hidden>
+            <canvas id="canvas" hidden></canvas>
+        </div>
+
+        <div class="controls" id="controls" hidden>
+            <p>Duotone effect applied with green shadows and pink highlights</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
