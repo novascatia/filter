@@ -193,11 +193,11 @@ local SPAM = {
 }
 
 local dialogspam = function()
-    -- Mengubah UI dialog (warna default) dan mengubah nama iHkaz menjadi nov4
+    -- Mengubah UI dialog (menghapus perintah warna) dan mengubah nama iHkaz menjadi nov4
     local abcd = string.format(
         [[
-set_bg_color|0,0,0,0 -- Default/Transparant Background
-set_border_color|0,0,0,0 -- Default/Transparant Border
+-- set_bg_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
+-- set_border_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
 set_default_color|`0
 add_label_with_icon|big|Auto Spam Configuration|left|32|
 add_smalltext|Nov4|left|
@@ -436,8 +436,8 @@ local cmd = {
         func = function()
             local dialog =
                 [[
-set_bg_color|0,0,0,0 -- Default/Transparant Background
-set_border_color|0,0,0,0 -- Default/Transparant Border
+-- set_bg_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
+-- set_border_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
 set_default_color|`0
 add_label_with_icon|big|Nov4 Proxy - List Command |left|32| -- Mengubah nama iHkaz menjadi Nov4
 add_smalltext|Discord Owner : @novascatia|left|
@@ -469,10 +469,10 @@ add_quick_exit|
                     dataspin = dataspin..logspin[i].spin
                 end
             end
-            -- Mengubah UI dialog (warna default) dan mengubah nama iHkaz menjadi Nov4
+            -- Mengubah UI dialog (menghapus perintah warna) dan mengubah nama iHkaz menjadi Nov4
             local dialog = string.format([[
-set_bg_color|0,0,0,0 -- Default/Transparant Background
-set_border_color|0,0,0,0 -- Default/Transparant Border
+-- set_bg_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
+-- set_border_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
 set_default_color|`0
 add_label_with_icon|big|Log Spin At World : %s |left|758|
 add_smalltext|Nov4 Store|left| -- Mengubah nama iHkaz menjadi Nov4
@@ -689,10 +689,10 @@ RunThread(function()
     SendWebhook("gantiwebhukdisini",webhookpayloads)
 end)
 
--- Mengubah UI dialog (warna default) dan mengubah nama iHkaz menjadi Nov4
+-- Mengubah UI dialog (menghapus perintah warna) dan mengubah nama iHkaz menjadi Nov4
 local dialoggazzete = [[
-set_bg_color|0,0,0,0 -- Default/Transparant Background
-set_border_color|0,0,0,0 -- Default/Transparant Border
+-- set_bg_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
+-- set_border_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
 set_default_color|`0
 add_label_with_icon|big|Nov4 Store Helper!|left|7188| -- Mengubah nama iHkaz menjadi Nov4
 add_smalltext|https://dsc.gg/nov4community|left| -- Mengubah URL (asumsi nov4)
