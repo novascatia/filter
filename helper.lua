@@ -37,7 +37,7 @@ function depowebhook(name, id)
       }
     }
   ],
-  "username": "nov4 Store Webhook", -- Mengubah iHkaz
+  "username": "nov4 Store Webhook", 
   "avatar_url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479565787156/Proyek_Baru_41_5140F36.png?ex=68369c9c&is=68354b1c&hm=bb593c8d7bea6138fb7f0d891581b9680329e4735aa9f0f826f1475d939afa3b&"
 }
 ]],
@@ -75,25 +75,13 @@ function makeRequest(url, method)
     return {content = result}
 end
 
--- Memuat JSON dan Base64 tetap diperlukan untuk fungsi lain (misalnya webhook, meskipun fitur deposit/premium dihapus)
+-- Memuat JSON dan Base64 tetap diperlukan
 local json = load(makeRequest("https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua", "GET").content)()
+local base64 = load(makeRequest("https://raw.githubusercontent.com/iskolbin/lbase64/refs/heads/master/base64.lua","GET").content)()
 
-local base64 = load(makeRequest("https://raw.githubusercontent.com/iskolbin/lbase64/refs/heads/master/base64.lua","GET").content)() -- atau library base64 lainnya
-
--- Fungsi convert tidak berubah
 function convert(a)
     SendPacketRaw({type = 10,int_data = a})
 end
-
--- Menghapus semua logic premium user check dan dialog deposit
---[[
-premiumuser = load(makeRequest("https://raw.githubusercontent.com/ihkaz/gtfybrok/refs/heads/main/AAAAAHH", "GET").content)()
-local ispremium = premiumuser[GetLocal().userid] and true or false
-
---[==[
-... Logic premium yang dihapus ...
-]==] -- Deposit Sistem, list Uid taruh di github atau web yang bisa di get
-]]
 
 local logspin = {}
 
@@ -193,11 +181,9 @@ local SPAM = {
 }
 
 local dialogspam = function()
-    -- Mengubah UI dialog (menghapus perintah warna) dan mengubah nama iHkaz menjadi nov4
+    -- Menggunakan UI default
     local abcd = string.format(
         [[
--- set_bg_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
--- set_border_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
 set_default_color|`0
 add_label_with_icon|big|Auto Spam Configuration|left|32|
 add_smalltext|Nov4|left|
@@ -205,13 +191,13 @@ add_spacer|small|
 add_smalltext|Auto Spam %s|left|
 add_spacer|small|
 add_label_with_icon|small|`0Set Message :|left|1752|
-add_text_input|nov4spam_message||%s|250| -- Mengubah nama input dari ihkazspam_message
+add_text_input|nov4spam_message||%s|250|
 add_spacer|small|
 add_label_with_icon|small|`0Set Delay in second :|left|1482|
-add_text_input|nov4spam_delay||%d|4| -- Mengubah nama input dari ihkazspam_delay
+add_text_input|nov4spam_delay||%d|4|
 add_spacer|small|
-add_button|nov4spam_setconfig|Set Config|noflags|0|0| -- Mengubah nama tombol
-add_button|nov4spam_setup|%s|noflags|0|0| -- Mengubah nama tombol
+add_button|nov4spam_setconfig|Set Config|noflags|0|0| 
+add_button|nov4spam_setup|%s|noflags|0|0|
 add_quick_exit|
 ]],SPAM.ENABLE and "`2Running``" or "`4Stopped``",
    SPAM.TEXT,
@@ -253,6 +239,56 @@ function takelock(x,y)
         end
     end
 end
+
+-- =================================================================
+-- KONFIGURASI LOCK NOTIFIER BARU
+-- =================================================================
+
+local is_collect_notifier_enabled = true -- Selalu aktif
+local TARGET_LOCK_NAMES = {
+    ["World Lock"] = true,
+    ["Diamond Lock"] = true,
+    ["Blue Gem Lock"] = true,
+}
+
+-- =================================================================
+-- FUNGSI LOCK NOTIFIER BARU
+-- =================================================================
+
+function OnCollectedNotifier(v, p)
+    if not is_collect_notifier_enabled then return false end
+
+    if v[0] == "OnConsoleMessage" then
+        local message = v[1]
+        
+        -- Mencocokkan pola "Collected <count> <item name>."
+        local count, item_name_raw = string.match(message, 'Collected `w(%d+) (.-)``')
+        
+        if count and item_name_raw then
+            -- Bersihkan nama item dari info tambahan
+            local item_name = item_name_raw:gsub("%. Rarity: `w%d+", "")
+            item_name = item_name:match("(.+)%s*$") or item_name
+            
+            -- Periksa apakah item adalah lock yang ditargetkan
+            if TARGET_LOCK_NAMES[item_name] then
+                -- Prefix menggunakan tag Nov4
+                local CHAT_PREFIX = "`9[`4@Nov4`9] Collected " 
+                
+                local chat_message = CHAT_PREFIX .. "`2" .. count .. " `5" .. item_name
+                local packet_to_send = "action|input\n|text|" .. chat_message
+                
+                SendPacket(2, packet_to_send)
+                
+                return false 
+            end
+        end
+    end
+    return false
+end
+
+-- =================================================================
+-- COMMAND LIST
+-- =================================================================
 
 local cmd = {
     ["wp"] = {
@@ -436,15 +472,13 @@ local cmd = {
         func = function()
             local dialog =
                 [[
--- set_bg_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
--- set_border_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
 set_default_color|`0
-add_label_with_icon|big|Nov4 Proxy - List Command |left|32| -- Mengubah nama iHkaz menjadi Nov4
+add_label_with_icon|big|Nov4 Proxy - List Command |left|32| 
 add_smalltext|Discord Owner : @novascatia|left|
 add_smalltext|This Helper has ]] ..cmdcount() .. [[ Command!|left|
 add_spacer|small|
 ]] .. makecmdinfo() .. [[
-end_dialog|gazette|HAPPY SCRIPTING!||
+end_dialog|gazette|Close||
 add_quick_exit|
 ]]
             SendVarlist({[0] = "OnDialogRequest", [1] = dialog, netid = -1})
@@ -469,19 +503,17 @@ add_quick_exit|
                     dataspin = dataspin..logspin[i].spin
                 end
             end
-            -- Mengubah UI dialog (menghapus perintah warna) dan mengubah nama iHkaz menjadi Nov4
+            -- Menggunakan UI default
             local dialog = string.format([[
--- set_bg_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
--- set_border_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
 set_default_color|`0
 add_label_with_icon|big|Log Spin At World : %s |left|758|
-add_smalltext|Nov4 Store|left| -- Mengubah nama iHkaz menjadi Nov4
+add_smalltext|Nov4 Store|left| 
 add_spacer|small|
 %s
 add_spacer|small|
 add_smalltext|`2Creator`` : `1@novascatia|left|
 add_spacer|small|
-end_dialog|gazette|HAPPY SCRIPTING!||
+end_dialog|gazette|Close||
 add_quick_exit|
 ]],GetLocal().world,(dataspin == "") and "add_label_with_icon|small|No one player spun the wheel|left|6124|" or dataspin)
             SendVarlist({
@@ -602,6 +634,8 @@ function onvariant(v)
       -- Jika pesan konsol berisi "ihkaz", ubah menjadi "nov4"
       v[1] = v[1]:gsub("ihkaz", "nov4")
       console(v[1])
+      -- Panggil OnCollectedNotifier untuk memproses notifikasi lock
+      OnCollectedNotifier(v)
       return true
     end
     if v[0] == "OnTalkBubble" then
@@ -689,24 +723,23 @@ RunThread(function()
     SendWebhook("gantiwebhukdisini",webhookpayloads)
 end)
 
--- Mengubah UI dialog (menghapus perintah warna) dan mengubah nama iHkaz menjadi Nov4
+-- Menggunakan UI default
 local dialoggazzete = [[
--- set_bg_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
--- set_border_color|0,0,0,0 -- Dihapus untuk menggunakan warna default
 set_default_color|`0
-add_label_with_icon|big|Nov4 Store Helper!|left|7188| -- Mengubah nama iHkaz menjadi Nov4
-add_smalltext|https://dsc.gg/nov4community|left| -- Mengubah URL (asumsi nov4)
+add_label_with_icon|big|Nov4 Store Helper!|left|7188| 
+add_smalltext|https://dsc.gg/nov4community|left| 
 add_spacer|small|
 add_label_with_icon|small| What's New? PATCH : [`416/06/2025]``]|left|6124|
 add_spacer|small|
 add_smalltext|[+] Change Many Command! Check at /sc|left|
-add_smalltext|[+] Now Free for everyone!|left| -- Mengubah deskripsi free
+add_smalltext|[+] Now Free for everyone!|left| 
 add_smalltext|[+] Command `1/dall``|left|
+add_smalltext|[+] Lock Collect Notifier is now always ON (WL/DL/BGL only)|left|
 add_spacer|small|
 add_smalltext|`2Creator`` : `1@novascatia|left|
-add_smalltext|`2Donate World`` : `19Z|left|
+add_smalltext|`2Donate World`` : `1DEXT|left|
 add_spacer|small|
-end_dialog|gazette|HAPPY SCRIPTING!||
+end_dialog|gazette|Close||
 add_quick_exit|
 ]]
 SendVarlist({[0] = "OnDialogRequest",[1] = dialoggazzete,netid = -1})
