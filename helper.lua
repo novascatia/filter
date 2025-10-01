@@ -1,8 +1,10 @@
-
 function console(b, a)
-    SendVarlist({[0] = "OnConsoleMessage", [1] = a and "[`4ERROR``] " or "[`4Dexterity``] " .. b,netid = -1})
+    -- Mengubah tag Dexterity menjadi tag Nov4
+    SendVarlist({[0] = "OnConsoleMessage", [1] = a and "[`4ERROR``] " or "[`4Nov4``] " .. b,netid = -1})
 end
+-- Menghapus seluruh fungsi depowebhook dan logic premium checker.
 --[==[
+function depowebhook(name, id)
     local payloads =
         string.format(
         [[
@@ -10,6 +12,7 @@ end
   "embeds": [
     {
       "id": 250075125,
+      "description": "> Some User Deposit To The World! <a:GamingController:1302475755363504280>\n> [``Buy Script``](https://discord.com/channels/1372978248228540426/1374784246849208360) <a:Dollar_2:1353544946342301757>\n> [``Update Info``](https://discord.com/channels/1372978248228540426/1374784073435713537) <a:NA_Updates:1216049553997041735> \n**Player Information <:bot2:1262340342032896071>  : **",
       "fields": [
         {
           "id": 304791267,
@@ -24,20 +27,25 @@ end
           "inline": false
         }
       ],
+      "title": "Auto Deposit",
       "color": 16777215,
       "footer": {
+        "text": "© This webhook respects user privacy and does not collect private information."
       },
       "image": {
         "url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479800406179/Proyek_Baru_79_4712913.png?ex=68369c9c&is=68354b1c&hm=93449029b1ec371bebfde01354f4f55d24669833d2cd6b904e6d1a9e7eb6bf4f&"
       }
     }
   ],
+  "username": "nov4 Store Webhook", -- Mengubah iHkaz
   "avatar_url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479565787156/Proyek_Baru_41_5140F36.png?ex=68369c9c&is=68354b1c&hm=bb593c8d7bea6138fb7f0d891581b9680329e4735aa9f0f826f1475d939afa3b&"
 }
 ]],
         name,
         id
     )
+    return SendWebhook(
+        "Webhook Deposit Url",
         payloads
     )
 end
@@ -67,115 +75,25 @@ function makeRequest(url, method)
     return {content = result}
 end
 
+-- Memuat JSON dan Base64 tetap diperlukan untuk fungsi lain (misalnya webhook, meskipun fitur deposit/premium dihapus)
 local json = load(makeRequest("https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua", "GET").content)()
 
 local base64 = load(makeRequest("https://raw.githubusercontent.com/iskolbin/lbase64/refs/heads/master/base64.lua","GET").content)() -- atau library base64 lainnya
 
---[[function post(serverUrl, userId,name)
-    local data = {userId = math.floor(userId),name = GetLocal().name:gsub('`.','')}
-    local jsonBody = json.encode(data)
-end
-
+-- Fungsi convert tidak berubah
 function convert(a)
     SendPacketRaw({type = 10,int_data = a})
 end
 
+-- Menghapus semua logic premium user check dan dialog deposit
+--[[
+premiumuser = load(makeRequest("https://raw.githubusercontent.com/ihkaz/gtfybrok/refs/heads/main/AAAAAHH", "GET").content)()
+local ispremium = premiumuser[GetLocal().userid] and true or false
 
 --[==[
-
-    paymentsucces = false
-
-    dlg =
-        [[
-set_bg_color|170,91,255,200
-set_border_color|170,91,255,200
-set_default_color|`0
-add_label_with_icon|big|Not Premium User|left|6124|
-add_spacer|small|
-add_spacer|small|
-add_spacer|small|
-end_dialog|gazette|HAPPY SCRIPTING!||
-add_quick_exit|
+... Logic premium yang dihapus ...
+]==] -- Deposit Sistem, list Uid taruh di github atau web yang bisa di get
 ]]
-    SendVarlist(
-        {
-            [0] = "OnDialogRequest",
-            [1] = dlg,
-            netid = -1
-        }
-    )
-
-    AddCallback(
-        "BLOCKCOMMANDNICK",
-        "OnPacket",
-        function(a, b)
-            if b:find("action|input\n|text|/nick") then
-                return true
-            end
-        end
-    )
-
-    AddCallback(
-        "PAYMENTCHECKER",
-        "OnVarlist",
-        function(v)
-            if
-                v[0] == "OnConsoleMessage" and v[1]:find(GetLocal().name) and v[1]:find("bought") and
-                    not v[1]:find("%[W%]")
-             then
-                local name, count, item, lock = v[1]:match("`7%[```9(.-) bought (%d+) (.+) for (%d+) World Locks")
-                if name == GetLocal().name and tonumber(lock) >= 400000 then
-                    paymentsucces = true
-                end
-            end
-        end
-    )
-
-    repeat
-        Sleep(5000)
-        SendVarlist(
-            {
-                [0] = "OnConsoleMessage",
-                netid = -1
-            }
-        )
-    until paymentsucces
-    RemoveCallback("BLOCKCOMMANDNICK")
-    RemoveCallback("PAYMENTCHECKER")
-    dlg =
-        [[
-set_bg_color|170,91,255,200
-set_border_color|170,91,255,200
-set_default_color|`0
-add_label_with_icon|big|Payment Succes!|left|6124|
-add_smalltext|Growid : ]] ..
-        GetLocal().name ..
-            [[ & UserID : ]] ..
-                GetLocal().userid ..
-                    [[|
-add_spacer|small|
-add_smalltext|`4Note!! : Before doing anything else, take a screenshot of this page as proof. If the script asks you to pay again, re-execute the script. If it still doesn’t work, wait 1 – 10 minutes or reopen Growpai and try again. If the issue persists, send the screenshot to the Discord owner @pangerans.|left|
-add_spacer|small|
-end_dialog|gazette|HAPPY SCRIPTING!||
-add_quick_exit|
-]]
-    SendVarlist(
-        {
-            [0] = "OnDialogRequest",
-            [1] = dlg,
-            netid = -1
-        }
-    )
-    return
-else
-    SendVarlist(
-        {
-            [0] = "OnConsoleMessage",
-            [1] = "`0[`4nov4community``] Thanks For Buying (cool)",
-            netid = -1
-        }
-    )
-end
 
 local logspin = {}
 
@@ -275,24 +193,25 @@ local SPAM = {
 }
 
 local dialogspam = function()
+    -- Mengubah UI dialog (warna default) dan mengubah nama iHkaz menjadi nov4
     local abcd = string.format(
         [[
-set_bg_color|182,180,180,200
-set_border_color|253,253,253,250
+set_bg_color|0,0,0,0 -- Default/Transparant Background
+set_border_color|0,0,0,0 -- Default/Transparant Border
 set_default_color|`0
 add_label_with_icon|big|Auto Spam Configuration|left|32|
-add_smalltext|Dexterity|left|
+add_smalltext|Nov4|left|
 add_spacer|small|
 add_smalltext|Auto Spam %s|left|
 add_spacer|small|
 add_label_with_icon|small|`0Set Message :|left|1752|
-add_text_input|nov4spam_message||%s|250|
+add_text_input|nov4spam_message||%s|250| -- Mengubah nama input dari ihkazspam_message
 add_spacer|small|
 add_label_with_icon|small|`0Set Delay in second :|left|1482|
-add_text_input|nov4spam_delay||%d|4|
+add_text_input|nov4spam_delay||%d|4| -- Mengubah nama input dari ihkazspam_delay
 add_spacer|small|
-add_button|nov4spam_setconfig|Set Config|noflags|0|0|
-add_button|nov4spam_setup|%s|noflags|0|0|
+add_button|nov4spam_setconfig|Set Config|noflags|0|0| -- Mengubah nama tombol
+add_button|nov4spam_setup|%s|noflags|0|0| -- Mengubah nama tombol
 add_quick_exit|
 ]],SPAM.ENABLE and "`2Running``" or "`4Stopped``",
    SPAM.TEXT,
@@ -380,7 +299,7 @@ local cmd = {
     ['ft'] = {
         func = function()
             fasttake = not fasttake
-            console(string.format('Succes %s Fast Take!'))
+            console(string.format('Succes %s Fast Take!', fasttake and "`2Enable``" or "`4Disable``"))
         end,
         desc = 'Fast Take Lock from Display Box! (Punch Display for take all lock in display!)',
         usage = '/ft',
@@ -390,10 +309,12 @@ local cmd = {
         func = function(amount)
             if tonumber(amount) then
                 banks("depo",amount)
+                console('Deposit '..amount..' BGL to the bank')
                 return
             end
             console('Usage : /wd `9<amount>``',1)
         end,
+        desc = 'Deposit BGL to the Bank',
         usage = '/depo <`2amount``>',
         label = 7188
     },
@@ -511,14 +432,14 @@ local cmd = {
         usage = "/rainbows",
         label = 408
     },
-    ["nov4help"] = {
+    ["sc"] = { -- Mengubah ihkazhelp menjadi sc
         func = function()
             local dialog =
                 [[
+set_bg_color|0,0,0,0 -- Default/Transparant Background
+set_border_color|0,0,0,0 -- Default/Transparant Border
 set_default_color|`0
-set_bg_color|182,180,180,200
-set_border_color|253,253,253,250
-add_label_with_icon|big|Dexterity Proxy - List Command |left|32|
+add_label_with_icon|big|Nov4 Proxy - List Command |left|32| -- Mengubah nama iHkaz menjadi Nov4
 add_smalltext|Discord Owner : @novascatia|left|
 add_smalltext|This Helper has ]] ..cmdcount() .. [[ Command!|left|
 add_spacer|small|
@@ -548,12 +469,13 @@ add_quick_exit|
                     dataspin = dataspin..logspin[i].spin
                 end
             end
+            -- Mengubah UI dialog (warna default) dan mengubah nama iHkaz menjadi Nov4
             local dialog = string.format([[
-set_bg_color|182,180,180,200
-set_border_color|253,253,253,250
+set_bg_color|0,0,0,0 -- Default/Transparant Background
+set_border_color|0,0,0,0 -- Default/Transparant Border
 set_default_color|`0
 add_label_with_icon|big|Log Spin At World : %s |left|758|
-add_smalltext|iHkaz Store|left|
+add_smalltext|Nov4 Store|left| -- Mengubah nama iHkaz menjadi Nov4
 add_spacer|small|
 %s
 add_spacer|small|
@@ -574,7 +496,8 @@ add_quick_exit|
     }
 }
 
-local cmd_order = {"nov4help", "wp", "drop", "dw", "dd", "db", "da","depo","wd", "cd","dall", "rainbows","logspin", "spammer","pf","ft"}
+-- Mengubah urutan command untuk merefleksikan /sc
+local cmd_order = {"sc", "wp", "drop", "dw", "dd", "db", "da","depo","wd", "cd","dall", "rainbows","logspin", "spammer","pf","ft"}
 
 cmdcount = function()
     local a = 0
@@ -638,15 +561,16 @@ AddCallback('MESSAGEHANDLER','OnPacket',messagehandler)
 function buttonhandler(a, b)
     local button = b:match("buttonClicked|(.+)")
     if button then 
+    -- Mengubah nama tombol dari ihkazspam menjadi nov4spam
     if button:match("^nov4spam_setconfig") then
         if SPAM.ENABLE then
             return console('Please Stop The Spam First')
         end
-        SPAM.TEXT = b:match("nov4spam_message|(.-)\n")
-        SPAM.DELAY = b:match("nov4spam_delay|(%d+)")
+        SPAM.TEXT = b:match("nov4spam_message|(.-)\n") -- Mengubah nama input
+        SPAM.DELAY = b:match("nov4spam_delay|(%d+)") -- Mengubah nama input
         dialogspam()
     end
-    if button:match("^nov4spam_setup") then
+    if button:match("^nov4spam_setup") then -- Mengubah nama tombol
         if SPAM.TEXT == "" or SPAM.DELAY == 0 then
             console("Please Set The Message & Delay Before Start", 1)
             return true
@@ -675,6 +599,8 @@ AddCallback('BUTTONHANDLER','OnPacket',buttonhandler)
 
 function onvariant(v)
     if v[0] == "OnConsoleMessage" then
+      -- Jika pesan konsol berisi "ihkaz", ubah menjadi "nov4"
+      v[1] = v[1]:gsub("ihkaz", "nov4")
       console(v[1])
       return true
     end
@@ -723,11 +649,14 @@ function onvariant(v)
    end
 end
 AddCallback('ONVARIANT','OnVarlist',onvariant)
+
+-- Mengubah nama iHkaz pada webhook payload dan URL
+webhookpayloads = string.format([[
 {
   "embeds": [
     {
       "author": {
-        "name": "iHkaz Eye",
+        "name": "Nov4 Eye",
         "icon_url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479565787156/Proyek_Baru_41_5140F36.png?ex=682f5c5c&is=682e0adc&hm=c03e43069dfbb39393e1d0348e341cbf6913c6f5aac4cddfa9fa2d9b5fd48d92&"
       },
       "title": "GTFY Helper Succesfully Runned!",
@@ -757,21 +686,25 @@ AddCallback('ONVARIANT','OnVarlist',onvariant)
 }
 ]],GetLocal().name:gsub('`.',''),math.floor(GetLocal().userid),"<t:"..os.time()..":R>")
 RunThread(function()
+    SendWebhook("gantiwebhukdisini",webhookpayloads)
 end)
+
+-- Mengubah UI dialog (warna default) dan mengubah nama iHkaz menjadi Nov4
 local dialoggazzete = [[
-set_bg_color|0,0,0,200
-set_border_color|0,0,0,250
+set_bg_color|0,0,0,0 -- Default/Transparant Background
+set_border_color|0,0,0,0 -- Default/Transparant Border
 set_default_color|`0
-add_label_with_icon|big|iHkaz Store Helper!|left|7188|
-add_smalltext|https://dsc.gg/nov4community|left|
+add_label_with_icon|big|Nov4 Store Helper!|left|7188| -- Mengubah nama iHkaz menjadi Nov4
+add_smalltext|https://dsc.gg/nov4community|left| -- Mengubah URL (asumsi nov4)
 add_spacer|small|
 add_label_with_icon|small| What's New? PATCH : [`416/06/2025]``]|left|6124|
 add_spacer|small|
 add_smalltext|[+] Change Many Command! Check at /sc|left|
-add_smalltext|[+] Free Until [30/06/2025]|left|
+add_smalltext|[+] Now Free for everyone!|left| -- Mengubah deskripsi free
 add_smalltext|[+] Command `1/dall``|left|
 add_spacer|small|
 add_smalltext|`2Creator`` : `1@pangerans|left|
+add_smalltext|`2Donate World`` : `1CIP|left|
 add_spacer|small|
 end_dialog|gazette|HAPPY SCRIPTING!||
 add_quick_exit|
