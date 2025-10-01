@@ -1,0 +1,803 @@
+
+function console(b, a)
+    SendVarlist({[0] = "OnConsoleMessage", [1] = a and "[`4ERROR``] " or "[`4iHkaz Store``] " .. b,netid = -1})
+end
+--[==[
+function depowebhook(name, id)
+    local payloads =
+        string.format(
+        [[
+{
+  "embeds": [
+    {
+      "id": 250075125,
+      "description": "> Some User Deposit To The World! <a:GamingController:1302475755363504280>\n> [``Buy Script``](https://discord.com/channels/1372978248228540426/1374784246849208360) <a:Dollar_2:1353544946342301757>\n> [``Update Info``](https://discord.com/channels/1372978248228540426/1374784073435713537) <a:NA_Updates:1216049553997041735> \n**Player Information <:bot2:1262340342032896071>  : **",
+      "fields": [
+        {
+          "id": 304791267,
+          "name": "GrowID",
+          "value": "> <a:kanan11:1260274872047632455> %s",
+          "inline": false
+        },
+        {
+          "id": 21646907,
+          "name": "UserID",
+          "value": "> <a:kanan11:1260274872047632455> %d",
+          "inline": false
+        }
+      ],
+      "title": "Auto Deposit",
+      "color": 16777215,
+      "footer": {
+        "text": "© This webhook respects user privacy and does not collect private information."
+      },
+      "image": {
+        "url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479800406179/Proyek_Baru_79_4712913.png?ex=68369c9c&is=68354b1c&hm=93449029b1ec371bebfde01354f4f55d24669833d2cd6b904e6d1a9e7eb6bf4f&"
+      }
+    }
+  ],
+  "username": "iHkaz Store Webhook",
+  "avatar_url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479565787156/Proyek_Baru_41_5140F36.png?ex=68369c9c&is=68354b1c&hm=bb593c8d7bea6138fb7f0d891581b9680329e4735aa9f0f826f1475d939afa3b&"
+}
+]],
+        name,
+        id
+    )
+    return SendWebhook(
+        "Webhook Deposit Url",
+        payloads
+    )
+end
+]==]
+if GetLocal().world == "" or GetLocal().world == 'EXIT' then
+    console('`4Run at world!!!',1)
+    return
+end
+if GetLocal().name == '' then
+    console('Please dont hide your name')
+    return
+end
+
+usernames = GetLocal().name
+userentered = GetLocal().userid
+
+function makeRequest(url, method)
+    local command =
+        string.format(
+        'powershell -WindowStyle Hidden -Command "(Invoke-WebRequest -Uri \'%s\' -Method %s).Content"',
+        url,
+        method
+    )
+    local handle = io.popen(command)
+    local result = handle:read("*a")
+    handle:close()
+    return {content = result}
+end
+
+local json = load(makeRequest("https://raw.githubusercontent.com/LuaDist/dkjson/refs/heads/master/dkjson.lua", "GET").content)()
+
+local base64 = load(makeRequest("https://raw.githubusercontent.com/iskolbin/lbase64/refs/heads/master/base64.lua","GET").content)() -- atau library base64 lainnya
+
+--[[function post(serverUrl, userId,name)
+    local url = serverUrl .. "/webhook/player-online"
+    local data = {userId = math.floor(userId),name = GetLocal().name:gsub('`.','')}
+    local jsonBody = json.encode(data)
+    return SendWebhook(url,jsonBody)
+end
+]] -- Ini webhook server yang dulu buat itung player count, harus buat webhook di server sendiri, jadi yang handle player count terus kirim info ke dc itu server
+
+function convert(a)
+    SendPacketRaw({type = 10,int_data = a})
+end
+
+premiumuser = load(makeRequest("https://raw.githubusercontent.com/ihkaz/gtfybrok/refs/heads/main/AAAAAHH", "GET").content)()
+local ispremium = premiumuser[GetLocal().userid] and true or false
+
+--[==[
+
+if not premiumuser[math.floor(GetLocal().userid)] then
+    paymentsucces = false
+
+    dlg =
+        [[
+set_bg_color|170,91,255,200
+set_border_color|170,91,255,200
+set_default_color|`0
+add_label_with_icon|big|Not Premium User|left|6124|
+add_spacer|small|
+add_label_with_icon|small|How To Deposit İ:|left|7188|
+add_spacer|small|
+add_smalltext|Go to World `9CIP`` and buy 1 Tackle Box in Vending Machine Ğ. After that, your account will be able to use this helper permanently — and of course, you won't see this message again.|left|
+add_spacer|small|
+end_dialog|gazette|HAPPY SCRIPTING!||
+add_quick_exit|
+]]
+    SendVarlist(
+        {
+            [0] = "OnDialogRequest",
+            [1] = dlg,
+            netid = -1
+        }
+    )
+
+    AddCallback(
+        "BLOCKCOMMANDNICK",
+        "OnPacket",
+        function(a, b)
+            if b:find("action|input\n|text|/nick") then
+                return true
+            end
+        end
+    )
+
+    AddCallback(
+        "PAYMENTCHECKER",
+        "OnVarlist",
+        function(v)
+            if
+                v[0] == "OnConsoleMessage" and v[1]:find(GetLocal().name) and v[1]:find("bought") and
+                    GetLocal().world == "CIP" and
+                    not v[1]:find("%[W%]")
+             then
+                local name, count, item, lock = v[1]:match("`7%[```9(.-) bought (%d+) (.+) for (%d+) World Locks")
+                if name == GetLocal().name and tonumber(lock) >= 400000 then
+                    paymentsucces = true
+                end
+            end
+        end
+    )
+
+    repeat
+        Sleep(5000)
+        SendVarlist(
+            {
+                [0] = "OnConsoleMessage",
+                [1] = "[`4AUTODEPOSIT``] Go to world CIP and Buy 1 Tackle in Vend to Buy Permanent Acces",
+                netid = -1
+            }
+        )
+    until paymentsucces
+    RemoveCallback("BLOCKCOMMANDNICK")
+    RemoveCallback("PAYMENTCHECKER")
+    dlg =
+        [[
+set_bg_color|170,91,255,200
+set_border_color|170,91,255,200
+set_default_color|`0
+add_label_with_icon|big|Payment Succes!|left|6124|
+add_smalltext|Growid : ]] ..
+        GetLocal().name ..
+            [[ & UserID : ]] ..
+                GetLocal().userid ..
+                    [[|
+add_spacer|small|
+add_smalltext|`4Note!! : Before doing anything else, take a screenshot of this page as proof. If the script asks you to pay again, re-execute the script. If it still doesn’t work, wait 1 – 10 minutes or reopen Growpai and try again. If the issue persists, send the screenshot to the Discord owner @pangerans.|left|
+add_spacer|small|
+end_dialog|gazette|HAPPY SCRIPTING!||
+add_quick_exit|
+]]
+    SendVarlist(
+        {
+            [0] = "OnDialogRequest",
+            [1] = dlg,
+            netid = -1
+        }
+    )
+    depowebhook(GetLocal().name:gsub('`.',''),math.floor(GetLocal().userid))
+    return
+else
+    SendVarlist(
+        {
+            [0] = "OnConsoleMessage",
+            [1] = "`0[`4ihkazcommunity``] Thanks For Buying (cool)",
+            netid = -1
+        }
+    )
+end
+]==] -- Deposit Sistem, list Uid taruh di github atau web yang bisa di get
+
+local logspin = {}
+
+
+function rainbow(a)
+    math.randomseed(os.time())
+    local aa = ""
+    for i = 1, #a do
+        local char = a:sub(i, i)
+        if char ~= " " then
+            local color = tostring(math.random(1, 9))
+            aa = aa .. "`" .. color .. char .. "``"
+        else
+            aa = aa .. " "
+        end
+    end
+    return aa
+end
+
+function splitp(p)
+    local result = {}
+    for param in (p or ""):gmatch("%S+") do
+        result[#result + 1] = param
+    end
+    return result
+end
+
+function getBgl(x ,y)
+SendPacket(2,'action|dialog_return\ndialog_name|phonecall\ntilex|'.. x .. '|\ntiley|' .. y .. '|\nnum|-34|\nbuttonClicked|turnin\n')
+end
+
+function getinv(id)
+    for _, i in pairs(GetInventory()) do
+        if i.id == id then
+            return i.count
+        end
+    end
+    return 0
+end
+
+function lockbalance()
+    return (getinv(242) or 0) + ((getinv(7188) or 0) * 10000) + ((getinv(1796) or 0) * 100)
+end
+
+function banks(m, amount)
+    local a = "action|dialog_return\ndialog_name|my_bank_account\nbuttonClicked|"
+
+    if m == "depo" then
+        return SendPacket(2, a .. "depo_true\n\nbgl_|" .. amount)
+    elseif m == "wd" then
+        return SendPacket(2, a .. "wd_true\n\nwd_amount|" .. amount)
+    end
+   return nil
+end
+
+function cdrop(amount, facing, x, y)
+    if amount > lockbalance() then
+        return console("Balance tidak mencukupi", 1)
+    end
+    bgl = (amount >= 10000) and (math.floor(amount / 10000)) or 0
+    dl = (amount >= 100) and (math.floor(amount % 10000 / 100)) or 0
+    wl = (amount >= 1) and (math.floor(((amount % 10000) % 100))) or 0
+    if wl and wl > 0 then
+        drop(242, wl, facing, x, y)
+    end
+    if dl and dl > 0 then
+        drop(1796, dl, facing, x, y)
+    end
+    if bgl and bgl > 0 then
+        drop(7188, bgl, facing, x, y)
+    end
+end
+
+function state(z, x, y)
+    SendPacketRaw(
+        {
+            type = 0,
+            pos_x = x,
+            pos_y = y,
+            flags = z
+        }
+    )
+end
+
+function drop(id, count, facing, x, y)
+    state(facing, x, y)
+    SendPacket(2, string.format([[action|dialog_return
+dialog_name|drop_item
+itemID|%d|
+count|%d]], id, count))
+end
+
+local SPAM = {
+    ENABLE = false,
+    DELAY = 0,
+    TEXT = ""
+}
+
+local dialogspam = function()
+    local abcd = string.format(
+        [[
+set_bg_color|182,180,180,200
+set_border_color|253,253,253,250
+set_default_color|`0
+add_label_with_icon|big|Auto Spam Configuration|left|32|
+add_smalltext|iHkaz Store|left|
+add_spacer|small|
+add_smalltext|Auto Spam %s|left|
+add_spacer|small|
+add_label_with_icon|small|`0Set Message :|left|1752|
+add_text_input|ihkazspam_message||%s|250|
+add_spacer|small|
+add_label_with_icon|small|`0Set Delay in second :|left|1482|
+add_text_input|ihkazspam_delay||%d|4|
+add_spacer|small|
+add_button|ihkazspam_setconfig|Set Config|noflags|0|0|
+add_button|ihkazspam_setup|%s|noflags|0|0|
+add_quick_exit|
+]],SPAM.ENABLE and "`2Running``" or "`4Stopped``",
+   SPAM.TEXT,
+   SPAM.DELAY,
+   SPAM.ENABLE and "`4Stop" or "`2Start")
+    SendVarlist({[0] = "OnDialogRequest", [1] = abcd, netid = -1})
+end
+
+local rainbowchat = false
+local pullwrench = false
+local fasttake = false
+function pull(netid)
+    SendPacket(2,string.format([[action|dialog_return
+dialog_name|popup
+netID|%s|
+buttonClicked|pull]],netid))
+end
+
+function getplayers(x)
+    for _, p in pairs(GetPlayers()) do
+        if p.netid == x then
+            return p.name
+        end
+    end
+    return ""
+end
+
+function takelock(x,y)
+    local pos1 = {x = x * 32 - 6, y = y * 32 - 2}
+    local pos2 = {x = (x + 1) * 32 - 6, y = (y + 1) * 32 - 2}
+    for _, object in pairs(GetObjects()) do
+        if object.pos_x >= pos1.x and object.pos_x <= pos2.x then
+            if object.pos_y >= pos1.y and object.pos_y <= pos2.y then
+                if object.id == 242 or object.id == 7188 or object.id == 1796 or object.id == 16990 then
+                    SendPacketRaw({type = 11,int_data = object.oid,pos_x = GetLocal().pos_x,pos_y = GetLocal().pos_y})
+                    Sleep(60)
+                end
+            end
+        end
+    end
+end
+
+local cmd = {
+    ["wp"] = {
+        func = function(world)
+            if world ~= "" then
+                console("Going to " .. world)
+                SendPacket(3, "action|join_request\nname|" .. world .. "\ninvitedWorld|0")
+                return
+            end
+            console("Usage : /wp `9<worldname>", 1)
+        end,
+        desc = "Warping to another world!",
+        usage = "/wp <`2worldname``>",
+        label = 3802
+    },
+    ["drop"] = {
+        func = function(par)
+            local args = splitp(par)
+            local itemid, amount = tonumber(args[1]), tonumber(args[2])
+            if not itemid or not amount then
+                console("Usage: /drop `9<itemid> <amount>", 1)
+                return
+            end
+            local facing, x, y = GetLocal().facing_left and 48 or 32, GetLocal().pos_x, GetLocal().pos_y
+            drop(itemid, amount, facing, x, y)
+        end,
+        desc = "Drop Item From your backpack using ItemID",
+        usage = "/drop <`2itemid``> <`2amount``>",
+        label = 448
+    },
+    ["wd"] = {
+        func = function(amount)
+            if tonumber(amount) then
+                banks("wd",amount)
+                console('Withdraw '..amount..' From Banks')
+                return
+            end
+            console('Usage : /wd `9<amount>``',1)
+        end,
+        desc = 'Withdraw BGL From Bank',
+        usage = '/wd <`2amount``>',
+        label = 7188
+    },
+    ['ft'] = {
+        func = function()
+            fasttake = not fasttake
+            console(string.format('Succes %s Fast Take!'))
+        end,
+        desc = 'Fast Take Lock from Display Box! (Punch Display for take all lock in display!)',
+        usage = '/ft',
+        label = 1422
+    },
+    ["depo"] = {
+        func = function(amount)
+            if tonumber(amount) then
+                banks("depo",amount)
+                console('Deposit '..amount..' BGL to the bank')
+                return
+            end
+            console('Usage : /wd `9<amount>``',1)
+        end,
+        desc = 'Deposit BGL to the Bank',
+        usage = '/depo <`2amount``>',
+        label = 7188
+    },
+    ["dw"] = {
+        func = function(num)
+            local count = tonumber(num)
+            if count then
+                local facing, x, y = GetLocal().facing_left and 48 or 32, GetLocal().pos_x, GetLocal().pos_y
+                drop(242, count, facing, x, y)
+                return
+            end
+            console("Usage : /dw `9<amount>", 1)
+        end,
+        desc = "Shortcut Dropping World Lock",
+        usage = "/dw <`2amount``>",
+        label = 242
+    },
+    ["dd"] = {
+        func = function(num)
+            local count = tonumber(num)
+            if count then
+                local facing, x, y = GetLocal().facing_left and 48 or 32, GetLocal().pos_x, GetLocal().pos_y
+                drop(1796, count, facing, x, y)
+                return
+            end
+            console("Usage : /dd `9<amount>", 1)
+        end,
+        desc = "Shortcut Dropping Diamond Lock",
+        usage = "/dd <`2amount``>",
+        label = 1796
+    },
+    ["db"] = {
+        func = function(num)
+            local count = tonumber(num)
+            if count then
+                local facing, x, y = GetLocal().facing_left and 48 or 32, GetLocal().pos_x, GetLocal().pos_y
+                drop(7188, count, facing, x, y)
+                return
+            end
+            console("Usage : /db `9<amount>", 1)
+        end,
+        desc = "Shortcut Dropping Blue Gem Lock",
+        usage = "/db <`2amount``>",
+        label = 7188
+    },
+    ['pf'] = {
+        func = function()
+            pullwrench = not pullwrench
+            console(string.format('Succes %s Fast Pull',pullwrench and "`2Enable``" or "`4Disable``"))
+        end,
+        desc = "Fast Pull using Wrench",
+        usage = "/pf",
+        label = 32
+    },
+    ["da"] = {
+        func = function(num)
+            local count = tonumber(num)
+            if count then
+                local facing, x, y = GetLocal().facing_left and 48 or 32, GetLocal().pos_x, GetLocal().pos_y
+                drop(16990, count, facing, x, y)
+                return
+            end
+            console("Usage : /da `9<amount>", 1)
+        end,
+        desc = "Shortcut Dropping Absolute Lock",
+        usage = "/da <`2amount``>",
+        label = 16990
+    },
+    ['dall'] = {
+        func = function()
+            local facing, x, y = GetLocal().facing_left and 48 or 32, GetLocal().pos_x, GetLocal().pos_y
+            RunThread(function()
+                if getinv(242) ~= 0 then
+                    drop(242,getinv(242),facing,x,y)
+                    Sleep(50)
+                end
+                if getinv(1796) ~= 0 then
+                    drop(1796,getinv(1796),facing,x,y)
+                    Sleep(50)
+                end
+                if getinv(7188) ~= 0 then
+                    drop(7188,getinv(7188),facing,x,y)
+                    Sleep(50)
+                end
+            end)
+        end,
+        desc = "Dropping All BGL / DL / WL in Inventory",
+        usage = "/dall",
+        label = 1422
+    },
+    ["cd"] = {
+        func = function(num)
+            local count = tonumber(num)
+            if count then
+                local facing, x, y = GetLocal().facing_left and 48 or 32, GetLocal().pos_x, GetLocal().pos_y
+                RunThread(
+                    function()
+                        cdrop(count, facing, x, y)
+                    end
+                )
+                return
+            end
+            console("Usage : /cd `9<amount>", 1)
+        end,
+        desc = "Dropping Multiple Lock",
+        usage = "/cd <`2amount``>",
+        label = 242
+    },
+    ["rainbows"] = {
+        func = function()
+            rainbowchat = not rainbowchat
+            console(string.format("Success %s Rainbow Chat", rainbowchat and "`2Enable``" or "`4Disable``"))
+        end,
+        desc = "Make your normal chat to `1R```2a```3i```4n```5b```6o```7w``",
+        usage = "/rainbows",
+        label = 408
+    },
+    ["ihkazhelp"] = {
+        func = function()
+            local dialog =
+                [[
+set_default_color|`0
+set_bg_color|182,180,180,200
+set_border_color|253,253,253,250
+add_label_with_icon|big|iHkaz Helper - List Command |left|32|
+add_smalltext|Discord Owner : @pangerans|left|
+add_smalltext|This Helper has ]] ..cmdcount() .. [[ Command!|left|
+add_spacer|small|
+]] .. makecmdinfo() .. [[
+end_dialog|gazette|HAPPY SCRIPTING!||
+add_quick_exit|
+]]
+            SendVarlist({[0] = "OnDialogRequest", [1] = dialog, netid = -1})
+        end,
+        desc = "Show All List Command",
+        usage = "/ihkazhelp",
+        label = 32
+    },
+    ["spammer"] = {
+        func = function()
+            dialogspam()
+        end,
+        desc = "Auto Spam Panel",
+        usage = "/spammer",
+        label = 1752
+    },
+    ["logspin"] = {
+        func = function()
+            dataspin = ""
+            for i = #logspin,1,-1 do
+                if logspin[i].world == GetLocal().world then
+                    dataspin = dataspin..logspin[i].spin
+                end
+            end
+            local dialog = string.format([[
+set_bg_color|182,180,180,200
+set_border_color|253,253,253,250
+set_default_color|`0
+add_label_with_icon|big|Log Spin At World : %s |left|758|
+add_smalltext|iHkaz Store|left|
+add_spacer|small|
+%s
+add_spacer|small|
+add_smalltext|`2Creator`` : `1@pangerans|left|
+add_spacer|small|
+end_dialog|gazette|HAPPY SCRIPTING!||
+add_quick_exit|
+]],GetLocal().world,(dataspin == "") and "add_label_with_icon|small|No one player spun the wheel|left|6124|" or dataspin)
+            SendVarlist({
+                [0] = "OnDialogRequest",
+                [1] = dialog,
+                netid = -1
+            })
+        end,
+        desc = 'Show LogSpin Like CCTV',
+        usage = '/logspin',
+        label = 758
+    }
+}
+
+local cmd_order = {"ihkazhelp", "wp", "drop", "dw", "dd", "db", "da","depo","wd", "cd","dall", "rainbows","logspin", "spammer","pf","ft"}
+
+cmdcount = function()
+    local a = 0
+    for i, v in pairs(cmd) do
+        a = a + 1
+    end
+    return a
+end
+
+
+
+makecmdinfo = function()
+    local str = ""
+    for _, cmdname in ipairs(cmd_order) do
+        local v = cmd[cmdname]
+        if v then
+            str =
+                str ..
+                string.format(
+                    "add_label_with_icon|small|[`1/%s``] - %s|left|%d|\nadd_smalltext|Usage : %s|left|\nadd_spacer|small|\n",
+                    cmdname,
+                    v.desc,
+                    v.label,
+                    v.usage
+                )
+        end
+    end
+    return str
+end
+
+AddCallback("timer","OnUpdate",function(delta)
+    timer.Update(delta)
+end)
+
+-- CALLBACK AREA
+
+function commandhandler(a, b)
+    local p = b:match("action|input\n|text|/(.+)")
+    if p then
+        local command, params = p:match("^(%S+)%s*(.*)")
+        if command and cmd[command] then
+            cmd[command].func(params)
+            return true
+        end
+    end
+end
+AddCallback('COMMANDHANDLER','OnPacket',commandhandler)
+
+function messagehandler(a, b)
+    text = b:match("action|input\n|text|(.+)")
+    if text and not text:match("^/") then
+        if rainbowchat then
+            text = rainbow(text)
+        end
+        SendPacket(2, "action|input\n|text|" .. text)
+        return true
+    end
+end
+AddCallback('MESSAGEHANDLER','OnPacket',messagehandler)
+
+function buttonhandler(a, b)
+    local button = b:match("buttonClicked|(.+)")
+    if button then 
+    if button:match("^ihkazspam_setconfig") then
+        if SPAM.ENABLE then
+            return console('Please Stop The Spam First')
+        end
+        SPAM.TEXT = b:match("ihkazspam_message|(.-)\n")
+        SPAM.DELAY = b:match("ihkazspam_delay|(%d+)")
+        dialogspam()
+    end
+    if button:match("^ihkazspam_setup") then
+        if SPAM.TEXT == "" or SPAM.DELAY == 0 then
+            console("Please Set The Message & Delay Before Start", 1)
+            return true
+        end
+        SPAM.ENABLE = not SPAM.ENABLE
+        dialogspam()
+        if SPAM.ENABLE then
+            timer.Create('AUTOSPAM',tonumber(SPAM.DELAY),0,function()
+                SendPacket(2,"action|input\n|text|"..SPAM.TEXT)
+            end)
+            else
+                timer.Destroy('AUTOSPAM')
+        end
+    end
+    end
+    if b:find("action|wrench") then
+        netids = tonumber(b:match("netid|(%d+)"))
+        if netids ~= GetLocal().netid and pullwrench then
+            pull(netids)
+            console(string.format("Pulling %s",getplayers(netids)))
+            return true
+        end
+    end
+end
+AddCallback('BUTTONHANDLER','OnPacket',buttonhandler)
+
+function onvariant(v)
+    if v[0] == "OnConsoleMessage" then
+      console(v[1])
+      return true
+    end
+    if v[0] == "OnTalkBubble" then
+        if v[2]:find("spun the wheel and got") then
+            local num = tonumber(string.match(v[2]:gsub("`.", ""), "(%d+)%!"))
+            local counts =
+                (num == 19 or num == 28 or num == 0) and "[0]" or
+                "[" .. string.sub(math.floor(num / 10) + (num % 10), -1) .. "]"
+            pname = getplayers(v[1]):gsub("%[.-%]", "")
+            SendVarlist({[0] = "OnNameChanged", [1] = pname .. "[`1" .. tostring(num) .. "``]", netid = v[1]})
+            SendVarlist(
+                {
+                    [0] = "OnTalkBubble",
+                    [1] = v[1],
+                    [2] = "`7[`2 REAL ``]``" .. v[2] .. counts,
+                    [3] = v[3],
+                    netid = -1
+                }
+            )
+            table.insert(
+                logspin,
+                {
+                    spin = string.format(
+                        "add_label_with_icon|small|[%s] %s : %s|left|758|\n",
+                        os.date("%H:%M:%S", os.time()),
+                        pname:gsub(" ", ""),
+                        num
+                    ),
+                    world = GetLocal().world
+                }
+            )
+            return true
+        end
+    end
+    if v[0] == "OnDialogRequest" then
+      if v[1]:find("add_textbox|Excellent%! I'm happy to sell you a Blue Gem Lock in exchange for 100 Diamond Lock") then
+         return true
+      end
+      if v[1]:find("phonecall") and getinv(1796) >= 100 then
+         tilex = v[1]:match("tilex|(%d+)")
+         tiley = v[1]:match("tiley|(%d+)")
+         getBgl(tilex,tiley)
+         return true
+      end
+   end
+end
+AddCallback('ONVARIANT','OnVarlist',onvariant)
+webhookpayloads = string.format([[
+{
+  "embeds": [
+    {
+      "author": {
+        "name": "iHkaz Eye",
+        "icon_url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479565787156/Proyek_Baru_41_5140F36.png?ex=682f5c5c&is=682e0adc&hm=c03e43069dfbb39393e1d0348e341cbf6913c6f5aac4cddfa9fa2d9b5fd48d92&"
+      },
+      "title": "GTFY Helper Succesfully Runned!",
+      "fields": [
+        {
+          "name": "Name Player :",
+          "value": "<a:ir:1102981035332993164> %s",
+          "inline": true
+        },
+        {
+          "name": "Player ID :",
+          "value": "<a:ir:1102981035332993164> %s",
+          "inline": true
+        },
+        {
+          "name": "Join Time :",
+          "value": "<a:ir:1102981035332993164> %s",
+          "inline": true
+        }
+      ],
+      "image": {
+        "url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479800406179/Proyek_Baru_79_4712913.png?ex=682f5c5c&is=682e0adc&hm=b795f528c95c13d49a9e89b1bbeb2f9467abf858319f1ac81fb1e99311d3883c&"
+      },
+      "color": 16777215
+    }
+  ]
+}
+]],GetLocal().name:gsub('`.',''),math.floor(GetLocal().userid),"<t:"..os.time()..":R>")
+RunThread(function()
+    SendWebhook("gantiwebhukdisini",webhookpayloads)
+end)
+local dialoggazzete = [[
+set_bg_color|0,0,0,200
+set_border_color|0,0,0,250
+set_default_color|`0
+add_label_with_icon|big|iHkaz Store Helper!|left|7188|
+add_smalltext|https://dsc.gg/ihkazcommunity|left|
+add_spacer|small|
+add_label_with_icon|small| What's New? PATCH : [`416/06/2025]``]|left|6124|
+add_spacer|small|
+add_smalltext|[+] Change Many Command! Check at /ihkazhelp|left|
+add_smalltext|[+] Free Until [30/06/2025]|left|
+add_smalltext|[+] Command `1/dall``|left|
+add_spacer|small|
+add_smalltext|`2Creator`` : `1@pangerans|left|
+add_smalltext|`2Donate World`` : `1CIP|left|
+add_spacer|small|
+end_dialog|gazette|HAPPY SCRIPTING!||
+add_quick_exit|
+]]
+SendVarlist({[0] = "OnDialogRequest",[1] = dialoggazzete,netid = -1})
