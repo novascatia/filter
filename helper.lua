@@ -479,7 +479,7 @@ add_smalltext|Nov4 Store|left| -- Mengubah nama iHkaz menjadi Nov4
 add_spacer|small|
 %s
 add_spacer|small|
-add_smalltext|`2Creator`` : `1@pangerans|left|
+add_smalltext|`2Creator`` : `1@novascatia|left|
 add_spacer|small|
 end_dialog|gazette|HAPPY SCRIPTING!||
 add_quick_exit|
@@ -703,8 +703,8 @@ add_smalltext|[+] Change Many Command! Check at /sc|left|
 add_smalltext|[+] Now Free for everyone!|left| -- Mengubah deskripsi free
 add_smalltext|[+] Command `1/dall``|left|
 add_spacer|small|
-add_smalltext|`2Creator`` : `1@pangerans|left|
-add_smalltext|`2Donate World`` : `1CIP|left|
+add_smalltext|`2Creator`` : `1@novascatia|left|
+add_smalltext|`2Donate World`` : `19Z|left|
 add_spacer|small|
 end_dialog|gazette|HAPPY SCRIPTING!||
 add_quick_exit|
