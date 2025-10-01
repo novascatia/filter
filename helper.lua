@@ -1,6 +1,6 @@
 
 function console(b, a)
-    SendVarlist({[0] = "OnConsoleMessage", [1] = a and "[`4ERROR``] " or "[`4iHkaz Store``] " .. b,netid = -1})
+    SendVarlist({[0] = "OnConsoleMessage", [1] = a and "[`4ERROR``] " or "[`4Dexterity``] " .. b,netid = -1})
 end
 --[==[
 function depowebhook(name, id)
@@ -300,7 +300,7 @@ set_bg_color|182,180,180,200
 set_border_color|253,253,253,250
 set_default_color|`0
 add_label_with_icon|big|Auto Spam Configuration|left|32|
-add_smalltext|iHkaz Store|left|
+add_smalltext|Dexterity|left|
 add_spacer|small|
 add_smalltext|Auto Spam %s|left|
 add_spacer|small|
@@ -539,8 +539,8 @@ local cmd = {
 set_default_color|`0
 set_bg_color|182,180,180,200
 set_border_color|253,253,253,250
-add_label_with_icon|big|iHkaz Helper - List Command |left|32|
-add_smalltext|Discord Owner : @pangerans|left|
+add_label_with_icon|big|Dexterity Proxy - List Command |left|32|
+add_smalltext|Discord Owner : @novascatia|left|
 add_smalltext|This Helper has ]] ..cmdcount() .. [[ Command!|left|
 add_spacer|small|
 ]] .. makecmdinfo() .. [[
@@ -550,7 +550,7 @@ add_quick_exit|
             SendVarlist({[0] = "OnDialogRequest", [1] = dialog, netid = -1})
         end,
         desc = "Show All List Command",
-        usage = "/ihkazhelp",
+        usage = "/sc",
         label = 32
     },
     ["spammer"] = {
@@ -790,7 +790,7 @@ add_smalltext|https://dsc.gg/ihkazcommunity|left|
 add_spacer|small|
 add_label_with_icon|small| What's New? PATCH : [`416/06/2025]``]|left|6124|
 add_spacer|small|
-add_smalltext|[+] Change Many Command! Check at /ihkazhelp|left|
+add_smalltext|[+] Change Many Command! Check at /sc|left|
 add_smalltext|[+] Free Until [30/06/2025]|left|
 add_smalltext|[+] Command `1/dall``|left|
 add_spacer|small|
