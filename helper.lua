@@ -3,7 +3,6 @@ function console(b, a)
     SendVarlist({[0] = "OnConsoleMessage", [1] = a and "[`4ERROR``] " or "[`4Dexterity``] " .. b,netid = -1})
 end
 --[==[
-function depowebhook(name, id)
     local payloads =
         string.format(
         [[
@@ -11,7 +10,6 @@ function depowebhook(name, id)
   "embeds": [
     {
       "id": 250075125,
-      "description": "> Some User Deposit To The World! <a:GamingController:1302475755363504280>\n> [``Buy Script``](https://discord.com/channels/1372978248228540426/1374784246849208360) <a:Dollar_2:1353544946342301757>\n> [``Update Info``](https://discord.com/channels/1372978248228540426/1374784073435713537) <a:NA_Updates:1216049553997041735> \n**Player Information <:bot2:1262340342032896071>  : **",
       "fields": [
         {
           "id": 304791267,
@@ -26,25 +24,20 @@ function depowebhook(name, id)
           "inline": false
         }
       ],
-      "title": "Auto Deposit",
       "color": 16777215,
       "footer": {
-        "text": "© This webhook respects user privacy and does not collect private information."
       },
       "image": {
         "url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479800406179/Proyek_Baru_79_4712913.png?ex=68369c9c&is=68354b1c&hm=93449029b1ec371bebfde01354f4f55d24669833d2cd6b904e6d1a9e7eb6bf4f&"
       }
     }
   ],
-  "username": "iHkaz Store Webhook",
   "avatar_url": "https://cdn.discordapp.com/attachments/1373013808468983858/1374798479565787156/Proyek_Baru_41_5140F36.png?ex=68369c9c&is=68354b1c&hm=bb593c8d7bea6138fb7f0d891581b9680329e4735aa9f0f826f1475d939afa3b&"
 }
 ]],
         name,
         id
     )
-    return SendWebhook(
-        "Webhook Deposit Url",
         payloads
     )
 end
@@ -79,23 +72,17 @@ local json = load(makeRequest("https://raw.githubusercontent.com/LuaDist/dkjson/
 local base64 = load(makeRequest("https://raw.githubusercontent.com/iskolbin/lbase64/refs/heads/master/base64.lua","GET").content)() -- atau library base64 lainnya
 
 --[[function post(serverUrl, userId,name)
-    local url = serverUrl .. "/webhook/player-online"
     local data = {userId = math.floor(userId),name = GetLocal().name:gsub('`.','')}
     local jsonBody = json.encode(data)
-    return SendWebhook(url,jsonBody)
 end
-]] -- Ini webhook server yang dulu buat itung player count, harus buat webhook di server sendiri, jadi yang handle player count terus kirim info ke dc itu server
 
 function convert(a)
     SendPacketRaw({type = 10,int_data = a})
 end
 
-premiumuser = load(makeRequest("https://raw.githubusercontent.com/ihkaz/gtfybrok/refs/heads/main/AAAAAHH", "GET").content)()
-local ispremium = premiumuser[GetLocal().userid] and true or false
 
 --[==[
 
-if not premiumuser[math.floor(GetLocal().userid)] then
     paymentsucces = false
 
     dlg =
@@ -105,9 +92,7 @@ set_border_color|170,91,255,200
 set_default_color|`0
 add_label_with_icon|big|Not Premium User|left|6124|
 add_spacer|small|
-add_label_with_icon|small|How To Deposit İ:|left|7188|
 add_spacer|small|
-add_smalltext|Go to World `9CIP`` and buy 1 Tackle Box in Vending Machine Ğ. After that, your account will be able to use this helper permanently — and of course, you won't see this message again.|left|
 add_spacer|small|
 end_dialog|gazette|HAPPY SCRIPTING!||
 add_quick_exit|
@@ -136,7 +121,6 @@ add_quick_exit|
         function(v)
             if
                 v[0] == "OnConsoleMessage" and v[1]:find(GetLocal().name) and v[1]:find("bought") and
-                    GetLocal().world == "CIP" and
                     not v[1]:find("%[W%]")
              then
                 local name, count, item, lock = v[1]:match("`7%[```9(.-) bought (%d+) (.+) for (%d+) World Locks")
@@ -152,7 +136,6 @@ add_quick_exit|
         SendVarlist(
             {
                 [0] = "OnConsoleMessage",
-                [1] = "[`4AUTODEPOSIT``] Go to world CIP and Buy 1 Tackle in Vend to Buy Permanent Acces",
                 netid = -1
             }
         )
@@ -183,18 +166,16 @@ add_quick_exit|
             netid = -1
         }
     )
-    depowebhook(GetLocal().name:gsub('`.',''),math.floor(GetLocal().userid))
     return
 else
     SendVarlist(
         {
             [0] = "OnConsoleMessage",
-            [1] = "`0[`4ihkazcommunity``] Thanks For Buying (cool)",
+            [1] = "`0[`4nov4community``] Thanks For Buying (cool)",
             netid = -1
         }
     )
 end
-]==] -- Deposit Sistem, list Uid taruh di github atau web yang bisa di get
 
 local logspin = {}
 
@@ -305,13 +286,13 @@ add_spacer|small|
 add_smalltext|Auto Spam %s|left|
 add_spacer|small|
 add_label_with_icon|small|`0Set Message :|left|1752|
-add_text_input|ihkazspam_message||%s|250|
+add_text_input|nov4spam_message||%s|250|
 add_spacer|small|
 add_label_with_icon|small|`0Set Delay in second :|left|1482|
-add_text_input|ihkazspam_delay||%d|4|
+add_text_input|nov4spam_delay||%d|4|
 add_spacer|small|
-add_button|ihkazspam_setconfig|Set Config|noflags|0|0|
-add_button|ihkazspam_setup|%s|noflags|0|0|
+add_button|nov4spam_setconfig|Set Config|noflags|0|0|
+add_button|nov4spam_setup|%s|noflags|0|0|
 add_quick_exit|
 ]],SPAM.ENABLE and "`2Running``" or "`4Stopped``",
    SPAM.TEXT,
@@ -409,12 +390,10 @@ local cmd = {
         func = function(amount)
             if tonumber(amount) then
                 banks("depo",amount)
-                console('Deposit '..amount..' BGL to the bank')
                 return
             end
             console('Usage : /wd `9<amount>``',1)
         end,
-        desc = 'Deposit BGL to the Bank',
         usage = '/depo <`2amount``>',
         label = 7188
     },
@@ -532,7 +511,7 @@ local cmd = {
         usage = "/rainbows",
         label = 408
     },
-    ["ihkazhelp"] = {
+    ["nov4help"] = {
         func = function()
             local dialog =
                 [[
@@ -595,7 +574,7 @@ add_quick_exit|
     }
 }
 
-local cmd_order = {"ihkazhelp", "wp", "drop", "dw", "dd", "db", "da","depo","wd", "cd","dall", "rainbows","logspin", "spammer","pf","ft"}
+local cmd_order = {"nov4help", "wp", "drop", "dw", "dd", "db", "da","depo","wd", "cd","dall", "rainbows","logspin", "spammer","pf","ft"}
 
 cmdcount = function()
     local a = 0
@@ -659,15 +638,15 @@ AddCallback('MESSAGEHANDLER','OnPacket',messagehandler)
 function buttonhandler(a, b)
     local button = b:match("buttonClicked|(.+)")
     if button then 
-    if button:match("^ihkazspam_setconfig") then
+    if button:match("^nov4spam_setconfig") then
         if SPAM.ENABLE then
             return console('Please Stop The Spam First')
         end
-        SPAM.TEXT = b:match("ihkazspam_message|(.-)\n")
-        SPAM.DELAY = b:match("ihkazspam_delay|(%d+)")
+        SPAM.TEXT = b:match("nov4spam_message|(.-)\n")
+        SPAM.DELAY = b:match("nov4spam_delay|(%d+)")
         dialogspam()
     end
-    if button:match("^ihkazspam_setup") then
+    if button:match("^nov4spam_setup") then
         if SPAM.TEXT == "" or SPAM.DELAY == 0 then
             console("Please Set The Message & Delay Before Start", 1)
             return true
@@ -744,7 +723,6 @@ function onvariant(v)
    end
 end
 AddCallback('ONVARIANT','OnVarlist',onvariant)
-webhookpayloads = string.format([[
 {
   "embeds": [
     {
@@ -779,14 +757,13 @@ webhookpayloads = string.format([[
 }
 ]],GetLocal().name:gsub('`.',''),math.floor(GetLocal().userid),"<t:"..os.time()..":R>")
 RunThread(function()
-    SendWebhook("gantiwebhukdisini",webhookpayloads)
 end)
 local dialoggazzete = [[
 set_bg_color|0,0,0,200
 set_border_color|0,0,0,250
 set_default_color|`0
 add_label_with_icon|big|iHkaz Store Helper!|left|7188|
-add_smalltext|https://dsc.gg/ihkazcommunity|left|
+add_smalltext|https://dsc.gg/nov4community|left|
 add_spacer|small|
 add_label_with_icon|small| What's New? PATCH : [`416/06/2025]``]|left|6124|
 add_spacer|small|
@@ -795,7 +772,6 @@ add_smalltext|[+] Free Until [30/06/2025]|left|
 add_smalltext|[+] Command `1/dall``|left|
 add_spacer|small|
 add_smalltext|`2Creator`` : `1@pangerans|left|
-add_smalltext|`2Donate World`` : `1CIP|left|
 add_spacer|small|
 end_dialog|gazette|HAPPY SCRIPTING!||
 add_quick_exit|
